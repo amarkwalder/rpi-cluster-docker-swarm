@@ -1,0 +1,13 @@
+#!/bin/bash
+
+BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
+source ${BASE_DIR}/../scripts/common
+
+rpi::cluster::docker-swarm::golang::clean(){
+
+  rpi::cluster::docker-swarm::common::log-step "Delete GOROOT / GOPATH directory"
+  rm -rf $BASE_DIR/../golang/go
+  rm -rf $BASE_DIR/../golang/go-code
+
+}
+

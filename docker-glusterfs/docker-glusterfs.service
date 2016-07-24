@@ -1,0 +1,13 @@
+[Unit]
+Description=Docker GlusterFS Plugin
+Requires=glusterd.service docker.service
+After=network.target rpcbind.service
+
+[Service]
+Type=simple
+PIDFile=/var/run/docker-glusterfs.pid
+EnvironmentFile=/etc/default/docker-glusterfs
+ExecStart=/usr/bin/docker-glusterfs -gfs-base ${DOCKER_GLUSTERFS_GFS_BASE} -rest ${DOCKER_GLUSTERFS_REST} -servers ${DOCKER_GLUSTERFS_SERVERS}
+
+[Install]
+WantedBy=multi-user.target

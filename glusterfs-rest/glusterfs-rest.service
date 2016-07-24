@@ -1,0 +1,12 @@
+[Unit]
+Description=GlusterFS REST Server
+Requires=glusterd.service docker-glusterfs.service
+After=network.target rpcbind.service
+
+[Service]
+Type=simple
+PIDFile=/var/run/docker-glusterfs-rest.pid
+ExecStart=/usr/bin/glusterrestd
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
+source ${BASE_DIR}/../scripts/common
+
+rpi::cluster::docker-swarm::glusterfs-rest::build(){
+  rpi::cluster::docker-swarm::common::log-step "Clone GIT Repository"
+  rm -rf ${BASE_DIR}/glusterfs-rest
+  git clone -q https://github.com/aravindavk/glusterfs-rest.git ${BASE_DIR}/glusterfs-rest 
+}
+
+rpi::cluster::docker-swarm::glusterfs-rest::install(){
+  rpi::cluster::docker-swarm::common::log-step "Stop GlusterFS REST Service"
+  systemctl stop glusterfs-rest
+
+  rpi::cluster::docker-swarm::common::log-step "Install GlusterFS REST Server"
+  (
+    cd ${BASE_DIR}/glusterfs-rest/
+    python setup.py install > /dev/null
+    glusterrest install
+  )
+
+  rpi::cluster::docker-swarm::common::log-step "Add Admin User"
+  glusterrest useradd -g glusterroot -p admin admin > /dev/null
+
+  rpi::cluster::docker-swarm::common::log-step "Install Configuration / Startup Script"
+  cp ${BASE_DIR}/glusterfs-rest.service /lib/systemd/system/
+
+  rpi::cluster::docker-swarm::common::log-step "Start GlusterFS REST Service"
+  systemctl daemon-reload
+  systemctl start glusterfs-rest.service
+}
+
+rpi::cluster::docker-swarm::glusterfs-rest::clean(){
+  rpi::cluster::docker-swarm::common::log-step "Delete cloned directory"
+  rm -rf ${BASE_DIR}/glusterfs-rest
+  rm -rf ${BASE_DIR}/GlusterFS_REST_API_Server.egg-info
+}
+

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
+source ${BASE_DIR}/../scripts/common
+
+rpi::cluster::docker-swarm::glusterfs::build(){
+  rpi::cluster::docker-swarm::common::log-step "nothing to do"
+}
+
+rpi::cluster::docker-swarm::glusterfs::install(){
+
+  rpi::cluster::docker-swarm::common::log-step "Stop GlusterFS Service"
+  systemctl stop glusterd 
+
+  rpi::cluster::docker-swarm::common::log-step "Install GlusterFS Server / Client"
+  apt-get install glusterfs-server glusterfs-client -y -qq
+
+  rpi::cluster::docker-swarm::common::log-step "Copy Startup Script"
+  cp ${BASE_DIR}/glusterd.service /lib/systemd/system/
+
+  rpi::cluster::docker-swarm::common::log-step "Start GlusterFS Service"
+  systemctl daemon-reload
+  systemctl start glusterd.service
+
+}
+
+rpi::cluster::docker-swarm::glusterfs::clean(){
+  rpi::cluster::docker-swarm::common::log-step "nothing to do"
+}
+

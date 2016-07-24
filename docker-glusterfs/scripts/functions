@@ -1,0 +1,38 @@
+#!/bin/bash
+
+BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
+source ${BASE_DIR}/../scripts/common
+
+rpi::cluster::docker-swarm::docker-glusterfs::build(){
+  source $BASE_DIR/../golang/scripts/go-env
+
+  rpi::cluster::docker-swarm::common::log-step "Build calavera/docker-volume-glusterfs"
+  $GO_BIN get github.com/calavera/docker-volume-glusterfs
+
+  if [[ ! -f $GOPATH/bin/docker-volume-glusterfs ]]; then
+    rpi::cluster::docker-swarm::common::log-step-err "Something went wrong during compilation, did not find binary to copy"
+    exit 1
+  else
+    rpi::cluster::docker-swarm::common::log-step "Copy binary to DIST directory"
+    cp $GOPATH/bin/docker-volume-glusterfs $BASE_DIR/docker-glusterfs
+  fi
+}
+
+rpi::cluster::docker-swarm::docker-glusterfs::install(){
+  rpi::cluster::docker-swarm::common::log-step "Stop Docker GlusterFS Service"
+  systemctl stop docker-glusterfs
+
+  rpi::cluster::docker-swarm::common::log-step "Install Binary and Configuration"
+  cp ${BASE_DIR}/docker-glusterfs /usr/bin/
+  cp ${BASE_DIR}/docker-glusterfs.service /lib/systemd/system/
+  cp ${BASE_DIR}/docker-glusterfs.conf /etc/default/docker-glusterfs
+
+  rpi::cluster::docker-swarm::common::log-step "Start Docker GlusterFS Service"
+  systemctl daemon-reload
+  systemctl start docker-glusterfs
+}
+
+rpi::cluster::docker-swarm::docker-glusterfs::clean(){
+  rpi::cluster::docker-swarm::common::log-step "Delete binary"
+  rm -f $BASE_DIR/docker-glusterfs
+}

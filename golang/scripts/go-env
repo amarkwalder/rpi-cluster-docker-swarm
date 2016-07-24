@@ -1,0 +1,22 @@
+#!/bin/bash
+
+export GO_BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
+source ${GO_BASE_DIR}/../scripts/common
+
+export GOROOT=$GO_BASE_DIR/go/
+export GO_BIN=$GOROOT/bin/go
+export GOPATH=$GO_BASE_DIR/go-code
+
+if [[ ! -d $GOROOT ]]; then 
+  rpi::cluster::docker-swarm::common::log-step "Download and install GO"
+  curl -sSL https://storage.googleapis.com/golang/go1.6.3.linux-armv6l.tar.gz | tar -xz -C $GO_BASE_DIR 
+fi 
+
+if [[ ! -d $GOPATH ]]; then
+  rpi::cluster::docker-swarm::common::log-step "Create directory for GOPATH" 
+  mkdir -p $GOPATH
+fi
+
+GO_VERSION=$($GO_BIN version)
+rpi::cluster::docker-swarm::common::log-step "$GO_VERSION"
+
