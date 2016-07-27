@@ -19,4 +19,4 @@ rpi::cluster::docker-swarm::common::log-header "GlusterFS REST"
 source ${ROOT_BASE_DIR}/glusterfs-rest/scripts/functions
 rpi::cluster::docker-swarm::glusterfs-rest::build
 
-rpi::cluster::docker-swarm::common::log-empty-line
+rpi::cluster::docker-swarm::common::log-footer

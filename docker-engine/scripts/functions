@@ -4,25 +4,55 @@ BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
 source ${BASE_DIR}/../scripts/common
 
 rpi::cluster::docker-swarm::docker-engine::build(){
-  rpi::cluster::docker-swarm::common::log-step "nothing to do"
+  rpi::cluster::docker-swarm::common::log-step "Nothing to do"
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 
 rpi::cluster::docker-swarm::docker-engine::install(){
   rpi::cluster::docker-swarm::common::log-step "Stop Docker Service"
-  systemctl stop docker.service docker.socket
+  systemctl stop docker.service docker.socket >> ${BASE_DIR}/../console.log 2>&1 
+  rpi::cluster::docker-swarm::common::log-status-step $? 
+ 
+  rpi::cluster::docker-swarm::common::log-step "Uninstall Docker 'docker-hypriot 1.11.1'"
+  apt-get remove docker-hypriot -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
-  rpi::cluster::docker-swarm::common::log-step "Uninstall 'old' Docker"
-  apt-get remove docker-hypriot -y -qq
-
-  rpi::cluster::docker-swarm::common::log-step "Install 'new' Docker"
-  dpkg -i ${BASE_DIR}/docker-engine_1.12.0~dev~git20160720.182418.0.a9ca19f-0~jessie_armhf.deb > /dev/null
+  rpi::cluster::docker-swarm::common::log-step "Install Docker 'docker 1.12.0-dev'"
+  dpkg -i ${BASE_DIR}/docker-engine_1.12.0~dev~git20160720.182418.0.a9ca19f-0~jessie_armhf.deb >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Start Docker Service"
-  systemctl daemon-reload
-  systemctl start docker.socket docker.service
+  systemctl daemon-reload >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  systemctl start docker.socket docker.service >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 
+rpi::cluster::docker-swarm::docker-engine::uninstall(){
+  rpi::cluster::docker-swarm::common::log-step "Stop Docker Service"
+  systemctl stop docker.service docker.socket >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Uninstall 'new' Docker"
+  dpkg -r docker-engine >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  dpkg -P docker-engine >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  apt-get autoremove -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Install 'old' Docker"
+  apt-get install docker-hypriot -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Start Docker Service"
+  systemctl daemon-reload >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  systemctl start docker.socket docker.service >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+}
 
 rpi::cluster::docker-swarm::docker-engine::clean(){
-  rpi::cluster::docker-swarm::common::log-step "nothing to do"
+  rpi::cluster::docker-swarm::common::log-step "Nothing to do"
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }

@@ -10,13 +10,17 @@ export GOPATH=$GO_BASE_DIR/go-code
 if [[ ! -d $GOROOT ]]; then 
   rpi::cluster::docker-swarm::common::log-step "Download and install GO"
   curl -sSL https://storage.googleapis.com/golang/go1.6.3.linux-armv6l.tar.gz | tar -xz -C $GO_BASE_DIR 
+  rpi::cluster::docker-swarm::common::log-status-step $?
 fi 
 
 if [[ ! -d $GOPATH ]]; then
   rpi::cluster::docker-swarm::common::log-step "Create directory for GOPATH" 
   mkdir -p $GOPATH
+  rpi::cluster::docker-swarm::common::log-status-step $?
 fi
 
-GO_VERSION=$($GO_BIN version)
+GO_VERSION=$( $GO_BIN version )
+TMP_RET=$?
 rpi::cluster::docker-swarm::common::log-step "$GO_VERSION"
+rpi::cluster::docker-swarm::common::log-status-step $TMP_RET
 

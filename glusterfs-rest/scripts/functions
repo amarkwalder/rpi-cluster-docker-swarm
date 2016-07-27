@@ -5,35 +5,77 @@ source ${BASE_DIR}/../scripts/common
 
 rpi::cluster::docker-swarm::glusterfs-rest::build(){
   rpi::cluster::docker-swarm::common::log-step "Clone GIT Repository"
-  rm -rf ${BASE_DIR}/glusterfs-rest
-  git clone -q https://github.com/aravindavk/glusterfs-rest.git ${BASE_DIR}/glusterfs-rest 
+  rm -rf ${BASE_DIR}/glusterfs-rest >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  git clone -q https://github.com/aravindavk/glusterfs-rest.git ${BASE_DIR}/glusterfs-rest >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 
 rpi::cluster::docker-swarm::glusterfs-rest::install(){
-  rpi::cluster::docker-swarm::common::log-step "Stop GlusterFS REST Service"
-  systemctl stop glusterfs-rest
-
   rpi::cluster::docker-swarm::common::log-step "Install GlusterFS REST Server"
+
+  apt-get install gunicorn python-setuptools -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  easy_install pip >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  pip install pyyaml pip-autoremove >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
   (
-    cd ${BASE_DIR}/glusterfs-rest/
-    python setup.py install > /dev/null
-    glusterrest install
+    cd ${BASE_DIR}/glusterfs-rest/ >> ${BASE_DIR}/../console.log 2>&1
+    rpi::cluster::docker-swarm::common::log-status $?
+    python setup.py install >> ${BASE_DIR}/../console.log 2>&1
+    rpi::cluster::docker-swarm::common::log-status $?
+    glusterrest install >> ${BASE_DIR}/../console.log 2>&1
+    # Somehow glusterrest install always return 1
+    rpi::cluster::docker-swarm::common::log-status 0 
+    exit $( rpi::cluster::docker-swarm::common::err-get )
   )
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Add Admin User"
-  glusterrest useradd -g glusterroot -p admin admin > /dev/null
+  glusterrest useradd -g glusterroot -p admin admin >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Install Configuration / Startup Script"
-  cp ${BASE_DIR}/glusterfs-rest.service /lib/systemd/system/
+  cp ${BASE_DIR}/glusterfs-rest.service /lib/systemd/system/ >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Start GlusterFS REST Service"
+  systemctl daemon-reload >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  systemctl start glusterfs-rest.service >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+}
+
+rpi::cluster::docker-swarm::glusterfs-rest::uninstall(){
+  rpi::cluster::docker-swarm::common::log-step "Stop GlusterFS REST Service"
+  systemctl stop glusterfs-rest >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Uninstall GlusterFS REST Server"
+  pip-autoremove GlusterFS-REST-API-Server -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  pip-autoremove pip-autoremove -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  apt-get remove gunicorn python-setuptools -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  apt-get autoremove -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  rm -rf /var/lib/glusterd/rest/ >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Remove Configuration / Startup Script"
+  rm /lib/systemd/system/glusterfs-rest.service >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
   systemctl daemon-reload
-  systemctl start glusterfs-rest.service
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 
 rpi::cluster::docker-swarm::glusterfs-rest::clean(){
   rpi::cluster::docker-swarm::common::log-step "Delete cloned directory"
   rm -rf ${BASE_DIR}/glusterfs-rest
+  rpi::cluster::docker-swarm::common::log-status $?
   rm -rf ${BASE_DIR}/GlusterFS_REST_API_Server.egg-info
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 

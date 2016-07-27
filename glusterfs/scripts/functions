@@ -4,27 +4,48 @@ BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
 source ${BASE_DIR}/../scripts/common
 
 rpi::cluster::docker-swarm::glusterfs::build(){
-  rpi::cluster::docker-swarm::common::log-step "nothing to do"
+  rpi::cluster::docker-swarm::common::log-step "Nothing to do"
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 
 rpi::cluster::docker-swarm::glusterfs::install(){
-
-  rpi::cluster::docker-swarm::common::log-step "Stop GlusterFS Service"
-  systemctl stop glusterd 
-
   rpi::cluster::docker-swarm::common::log-step "Install GlusterFS Server / Client"
-  apt-get install glusterfs-server glusterfs-client -y -qq
+  apt-get install glusterfs-server glusterfs-client -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Copy Startup Script"
-  cp ${BASE_DIR}/glusterd.service /lib/systemd/system/
+  cp ${BASE_DIR}/glusterd.service /lib/systemd/system/ >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Start GlusterFS Service"
-  systemctl daemon-reload
-  systemctl start glusterd.service
+  systemctl daemon-reload >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  systemctl start glusterd.service >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+}
 
+rpi::cluster::docker-swarm::glusterfs::uninstall(){
+  rpi::cluster::docker-swarm::common::log-step "Stop GlusterFS Service"
+  systemctl stop glusterd >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Uninstall GlusterFS Server / Client"
+  apt-get remove glusterfs-server glusterfs-client -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  apt-get autoremove -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Remove Startup Script"
+  rm /lib/systemd/system/glusterd.service >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Reload Systemd Daemon"
+  systemctl daemon-reload >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 
 rpi::cluster::docker-swarm::glusterfs::clean(){
-  rpi::cluster::docker-swarm::common::log-step "nothing to do"
+  rpi::cluster::docker-swarm::common::log-step "Nothing to do"
+  rpi::cluster::docker-swarm::common::log-status-step $?
 }
 

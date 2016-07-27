@@ -25,4 +25,6 @@ rpi::cluster::docker-swarm::common::log-header "GO"
 source ${ROOT_BASE_DIR}/golang/scripts/functions
 rpi::cluster::docker-swarm::golang::clean
 
-rpi::cluster::docker-swarm::common::log-empty-line
+rpi::cluster::docker-swarm::common::log-footer
+
+rm -f ${ROOT_BASE_DIR}/console.log
