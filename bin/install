@@ -5,9 +5,6 @@ source ${ROOT_BASE_DIR}/scripts/common
 
 rpi::cluster::docker-swarm::common::check-root
 
-rpi::cluster::docker-swarm::common::log-header "General"
-rpi::cluster::docker-swarm::common::install
-
 rpi::cluster::docker-swarm::common::log-header "Docker Engine"
 source ${ROOT_BASE_DIR}/docker-engine/scripts/functions
 rpi::cluster::docker-swarm::docker-engine::install
