@@ -37,6 +37,8 @@ rpi::cluster::docker-swarm::glusterfs-rest::install(){
   rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Install Configuration / Startup Script"
+  mkdir -p /data/glusterfs >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
   cp ${BASE_DIR}/glusterfs-rest.service /lib/systemd/system/ >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 

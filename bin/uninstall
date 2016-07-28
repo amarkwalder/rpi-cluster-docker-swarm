@@ -5,9 +5,6 @@ source ${ROOT_BASE_DIR}/scripts/common
 
 rpi::cluster::docker-swarm::common::check-root
 
-rpi::cluster::docker-swarm::common::log-header "General"
-rpi::cluster::docker-swarm::common::uninstall
-
 rpi::cluster::docker-swarm::common::log-header "GlusterFS REST"
 source ${ROOT_BASE_DIR}/glusterfs-rest/scripts/functions
 rpi::cluster::docker-swarm::glusterfs-rest::uninstall

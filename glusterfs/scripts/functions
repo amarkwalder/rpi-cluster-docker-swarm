@@ -33,6 +33,10 @@ rpi::cluster::docker-swarm::glusterfs::uninstall(){
   apt-get remove glusterfs-server glusterfs-client -y >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
   apt-get autoremove -y >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $? 
+  rm -rf /var/lib/glusterfs/ >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  rm -rf /var/log/glusterd/ >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Remove Startup Script"
