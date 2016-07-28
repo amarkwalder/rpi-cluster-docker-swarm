@@ -33,7 +33,7 @@ rpi::cluster::docker-swarm::docker-engine::uninstall(){
   systemctl stop docker.service docker.socket >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 
-  rpi::cluster::docker-swarm::common::log-step "Uninstall 'new' Docker"
+  rpi::cluster::docker-swarm::common::log-step "Uninstall Docker 'docker 1.12.0-dev'"
   dpkg -r docker-engine >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
   dpkg -P docker-engine >> ${BASE_DIR}/../console.log 2>&1
@@ -41,7 +41,7 @@ rpi::cluster::docker-swarm::docker-engine::uninstall(){
   apt-get autoremove -y >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 
-  rpi::cluster::docker-swarm::common::log-step "Install 'old' Docker"
+  rpi::cluster::docker-swarm::common::log-step "Install Docker 'docker-hypriot 1.11.1'"
   apt-get install docker-hypriot -y >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 

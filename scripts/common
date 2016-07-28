@@ -38,7 +38,7 @@ function rpi::cluster::docker-swarm::common::install(){
 
 function rpi::cluster::docker-swarm::common::uninstall(){
   rpi::cluster::docker-swarm::common::log-step "General Utilities"
-  apt-get uninstall vim make gcc ntp -y >> ${COMMON_BASE_DIR}/../console.log 2>&1
+  apt-get uninstall vim make gcc ntp >> ${COMMON_BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 
   # Timezone and Boot Options will not be rolled back
@@ -57,6 +57,7 @@ function rpi::cluster::docker-swarm::common::log-step(){
   echo "" >> ${COMMON_BASE_DIR}/../console.log 2>&1
   echo "- INFO: $@" >> ${COMMON_BASE_DIR}/../console.log 2>&1
   printf "%s %-50s" "-" "$@" 
+  rpi::cluster::docker-swarm::common::spinner-on
   rpi::cluster::docker-swarm::common::err-reset
 }
 
@@ -82,6 +83,7 @@ function rpi::cluster::docker-swarm::common::log-status(){
   echo "--> STATUS: $1" >> ${COMMON_BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::err-count $1
   [[ $# == 1 ]] && return $1
+  rpi::cluster::docker-swarm::common::spinner-off
   [[ $( rpi::cluster::docker-swarm::common::err-get ) > 0 ]] && printf "[${RED}%s${NC}]\n" "FAILED" || printf "[${GREEN}%s${NC}]\n" "OK"
 }
 
@@ -107,3 +109,19 @@ function rpi::cluster::docker-swarm::common::log-footer(){
   printf "\n"
 }
 
+
+function rpi::cluster::docker-swarm::common::spinner-on(){
+  local i sp n
+  sp="/-\|"
+  n=${#sp}
+  ( while sleep 0.1; do
+      printf "%s\b" "${sp:i++%n:1}"
+    done
+  ) &
+  PID=$!
+  disown
+}
+
+function rpi::cluster::docker-swarm::common::spinner-off(){
+  kill $PID
+}
