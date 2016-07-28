@@ -45,6 +45,9 @@ rpi::cluster::docker-swarm::glusterfs-rest::install(){
   rpi::cluster::docker-swarm::common::log-step "Start GlusterFS REST Service"
   systemctl daemon-reload >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
+  systemctl enable glusterfs-rest >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  killall -9 glusterrestd  >> ${BASE_DIR}/../console.log 2>&1
   systemctl start glusterfs-rest.service >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 }

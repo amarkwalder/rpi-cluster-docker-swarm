@@ -33,6 +33,9 @@ rpi::cluster::docker-swarm::docker-glusterfs::install(){
   rpi::cluster::docker-swarm::common::log-step "Start Docker GlusterFS Service"
   systemctl daemon-reload >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
+  systemctl enable docker-glusterfs >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status $?
+  killall -9 docker-glusterfs >> ${BASE_DIR}/../console.log 2>&1
   systemctl start docker-glusterfs >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 }
