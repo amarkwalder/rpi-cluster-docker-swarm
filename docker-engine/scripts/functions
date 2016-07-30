@@ -17,8 +17,8 @@ rpi::cluster::docker-swarm::docker-engine::install(){
   apt-get remove docker-hypriot -y >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 
-  rpi::cluster::docker-swarm::common::log-step "Install Docker 'docker 1.12.0-dev'"
-  dpkg -i ${BASE_DIR}/docker-engine_1.12.0~dev~git20160720.182418.0.a9ca19f-0~jessie_armhf.deb >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-step "Install Docker 'docker 1.12.0'"
+  dpkg -i ${BASE_DIR}/docker-engine_1.12.0~git20160727.233510.0.8eab29e-0~jessie_armhf.deb >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 
   rpi::cluster::docker-swarm::common::log-step "Start Docker Service"
@@ -33,7 +33,7 @@ rpi::cluster::docker-swarm::docker-engine::uninstall(){
   systemctl stop docker.service docker.socket >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
 
-  rpi::cluster::docker-swarm::common::log-step "Uninstall Docker 'docker 1.12.0-dev'"
+  rpi::cluster::docker-swarm::common::log-step "Uninstall Docker 'docker 1.12.0'"
   dpkg -r docker-engine >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
   dpkg -P docker-engine >> ${BASE_DIR}/../console.log 2>&1
