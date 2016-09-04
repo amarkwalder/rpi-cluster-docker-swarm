@@ -3,19 +3,18 @@
 BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
 source ${BASE_DIR}/../scripts/common
 
-rpi::cluster::docker-swarm::docker-glusterfs::build(){
-  rpi::cluster::docker-swarm::common::log-step "Nothing to do"
-  rpi::cluster::docker-swarm::common::log-status-step $?
-}
-
 rpi::cluster::docker-swarm::docker-glusterfs::install(){
-  rpi::cluster::docker-swarm::common::log-step "Install Binary and Configuration"
-
+  
+  rpi::cluster::docker-swarm::common::log-step "Download Binary"
   local URL=https://github.com/amarkwalder/docker-volume-glusterfs/releases/download/v0.1.0/docker-volume-glusterfs-0.1.0-linux_arm.tar.gz
-  curl -sSL ${URL} | tar xz > ${BASE_DIR}/docker-glusterfs >> ${BASE_DIR}/../console.log 2>&1 
-  cp ${BASE_DIR}/docker-glusterfs /usr/bin/ >> ${BASE_DIR}/../console.log 2>&1
+  curl -sSL ${URL} | tar xz >> ${BASE_DIR}/../console.log 2>&1 
+  rpi::cluster::docker-swarm::common::log-status-step $?
 
-  rpi::cluster::docker-swarm::common::log-status $?
+  rpi::cluster::docker-swarm::common::log-step "Install Binary"
+  mv ${BASE_DIR}/../docker-volume-glusterfs /usr/bin/docker-glusterfs >> ${BASE_DIR}/../console.log 2>&1
+  rpi::cluster::docker-swarm::common::log-status-step $?
+
+  rpi::cluster::docker-swarm::common::log-step "Install Configuration"
   cp ${BASE_DIR}/docker-glusterfs.service /lib/systemd/system/ >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
   cp ${BASE_DIR}/docker-glusterfs.conf /etc/default/docker-glusterfs >> ${BASE_DIR}/../console.log 2>&1

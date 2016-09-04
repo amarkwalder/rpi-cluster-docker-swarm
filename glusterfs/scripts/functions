@@ -3,11 +3,6 @@
 BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
 source ${BASE_DIR}/../scripts/common
 
-rpi::cluster::docker-swarm::glusterfs::build(){
-  rpi::cluster::docker-swarm::common::log-step "Nothing to do"
-  rpi::cluster::docker-swarm::common::log-status-step $?
-}
-
 rpi::cluster::docker-swarm::glusterfs::install(){
   rpi::cluster::docker-swarm::common::log-step "Install GlusterFS Server / Client"
   apt-get install glusterfs-server glusterfs-client -y >> ${BASE_DIR}/../console.log 2>&1

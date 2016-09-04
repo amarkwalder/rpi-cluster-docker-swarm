@@ -3,17 +3,14 @@
 BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
 source ${BASE_DIR}/../scripts/common
 
-rpi::cluster::docker-swarm::glusterfs-rest::build(){
+rpi::cluster::docker-swarm::glusterfs-rest::install(){
   rpi::cluster::docker-swarm::common::log-step "Clone GIT Repository"
   rm -rf ${BASE_DIR}/glusterfs-rest >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
   git clone -q https://github.com/aravindavk/glusterfs-rest.git ${BASE_DIR}/glusterfs-rest >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status-step $?
-}
 
-rpi::cluster::docker-swarm::glusterfs-rest::install(){
   rpi::cluster::docker-swarm::common::log-step "Install GlusterFS REST Server"
-
   apt-get install gunicorn python-setuptools -y >> ${BASE_DIR}/../console.log 2>&1
   rpi::cluster::docker-swarm::common::log-status $?
   easy_install pip >> ${BASE_DIR}/../console.log 2>&1
