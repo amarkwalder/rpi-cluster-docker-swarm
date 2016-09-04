@@ -17,8 +17,4 @@ rpi::cluster::docker-swarm::common::log-header "GlusterFS"
 source ${ROOT_BASE_DIR}/glusterfs/scripts/functions
 rpi::cluster::docker-swarm::glusterfs::uninstall
 
-rpi::cluster::docker-swarm::common::log-header "Docker Engine"
-source ${ROOT_BASE_DIR}/docker-engine/scripts/functions
-rpi::cluster::docker-swarm::docker-engine::uninstall
-
 rpi::cluster::docker-swarm::common::log-footer

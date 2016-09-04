@@ -3,10 +3,6 @@
 ROOT_BASE_DIR=$( cd "$( echo "${BASH_SOURCE[0]%/*}/.." )" && pwd )
 source ${ROOT_BASE_DIR}/scripts/common
 
-rpi::cluster::docker-swarm::common::log-header "Docker Engine"
-source ${ROOT_BASE_DIR}/docker-engine/scripts/functions
-rpi::cluster::docker-swarm::docker-engine::build
-
 rpi::cluster::docker-swarm::common::log-header "Docker Plugin for GlusterFS"
 source ${ROOT_BASE_DIR}/docker-glusterfs/scripts/functions
 rpi::cluster::docker-swarm::docker-glusterfs::build
